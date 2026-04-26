@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 2 - Тест по арифметике</title>
+</head>
+<body>
+    <h1>Задание 2: Тестирование знаний по арифметике</h1>
+    <p>Нажмите кнопку для запуска теста (10 вопросов)</p>
+    <button onclick="startTest()">Запустить тест</button>
+
+    <script>
+        function startTest() {
+            let correctAnswers = 0;
+            const totalQuestions = 10;
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const num1 = Math.floor(Math.random() * 20) + 1;
+                const num2 = Math.floor(Math.random() * 20) + 1;
+                const operators = ['+', '-', '*'];
+                const operator = operators[Math.floor(Math.random() * operators.length)];
+                
+                let correctAnswer;
+                switch (operator) {
+                    case '+':
+                        correctAnswer = num1 + num2;
+                        break;
+                    case '-':
+                        correctAnswer = num1 - num2;
+                        break;
+                    case '*':
+                        correctAnswer = num1 * num2;
+                        break;
+                }
+                
+                const userAnswer = prompt(`Вопрос ${i}: Сколько будет ${num1} ${operator} ${num2}?`);
+                
+                if (userAnswer !== null && parseInt(userAnswer) === correctAnswer) {
+                    correctAnswers++;
+                    alert("Правильно!");
+                } else {
+                    alert("Неправильно! Правильный ответ: " + correctAnswer);
+                }
+            }
+            
+            // За каждые 2 вопроса дается один балл
+            const score = Math.floor(correctAnswers / 2);
+            
+            // Определение оценки
+            let grade;
+            if (score >= 5) {
+                grade = "Отлично (5)";
+            } else if (score >= 4) {
+                grade = "Хорошо (4)";
+            } else if (score >= 3) {
+                grade = "Удовлетворительно (3)";
+            } else if (score >= 2) {
+                grade = "Плохо (2)";
+            } else {
+                grade = "Очень плохо (1)";
+            }
+            
+            alert(`Тест завершен!\nПравильных ответов: ${correctAnswers} из ${totalQuestions}\nБаллов: ${score}\nОценка: ${grade}`);
+        }
+    </script>
+</body>
+</html>

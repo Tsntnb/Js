@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 6 - Двоичное в десятичное</title>
+</head>
+<body>
+    <h1>Задание 6: Перевод двоичного числа в десятичное</h1>
+    <p>Нажмите кнопку для запуска программы</p>
+    <button onclick="binaryToDecimal()">Запустить</button>
+
+    <script>
+        function binaryToDecimal() {
+            const input = prompt("Введите двоичное число (например, 1011):");
+            
+            if (input === null || input.trim() === "") {
+                alert("Вы не ввели число!");
+                return;
+            }
+            
+            const binaryString = input.trim();
+            
+            // Проверка, что введены только 0 и 1
+            if (!/^[01]+$/.test(binaryString)) {
+                alert("Ошибка! Введите корректное двоичное число (только 0 и 1)");
+                return;
+            }
+            
+            // Перевод из двоичной системы в десятичную
+            let decimal = 0;
+            for (let i = 0; i < binaryString.length; i++) {
+                const digit = parseInt(binaryString[i]);
+                const power = binaryString.length - 1 - i;
+                decimal += digit * Math.pow(2, power);
+            }
+            
+            alert("Двоичное число " + binaryString + " в десятичной системе равно: " + decimal);
+        }
+    </script>
+</body>
+</html>
