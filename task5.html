@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 5 - Сумма цифр трехзначного числа</title>
+</head>
+<body>
+    <h1>Задание 5: Сумма цифр трехзначного числа</h1>
+    <p>Нажмите кнопку для запуска программы</p>
+    <button onclick="calculateSumDigits()">Запустить</button>
+
+    <script>
+        function calculateSumDigits() {
+            const input = prompt("Введите трехзначное число:");
+            
+            if (input === null || input.trim() === "") {
+                alert("Вы не ввели число!");
+                return;
+            }
+            
+            const num = parseInt(input);
+            
+            if (isNaN(num) || num < 100 || num > 999) {
+                alert("Ошибка! Введите трехзначное число (от 100 до 999)");
+                return;
+            }
+            
+            // Находим сумму цифр
+            const hundreds = Math.floor(num / 100);
+            const tens = Math.floor((num % 100) / 10);
+            const units = num % 10;
+            
+            const sum = hundreds + tens + units;
+            
+            alert("Сумма цифр числа " + num + " равна: " + hundreds + " + " + tens + " + " + units + " = " + sum);
+        }
+    </script>
+</body>
+</html>

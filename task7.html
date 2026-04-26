@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 7 - Шестнадцатеричное в десятичное</title>
+</head>
+<body>
+    <h1>Задание 7: Перевод шестнадцатеричного числа в десятичное</h1>
+    <p>Нажмите кнопку для запуска программы</p>
+    <button onclick="hexToDecimal()">Запустить</button>
+
+    <script>
+        function hexToDecimal() {
+            const input = prompt("Введите шестнадцатеричное число (например, 1A3F):");
+            
+            if (input === null || input.trim() === "") {
+                alert("Вы не ввели число!");
+                return;
+            }
+            
+            const hexString = input.trim().toUpperCase();
+            
+            // Проверка, что введены корректные шестнадцатеричные символы
+            if (!/^[0-9A-F]+$/.test(hexString)) {
+                alert("Ошибка! Введите корректное шестнадцатеричное число (0-9, A-F)");
+                return;
+            }
+            
+            // Перевод из шестнадцатеричной системы в десятичную
+            let decimal = 0;
+            for (let i = 0; i < hexString.length; i++) {
+                const char = hexString[i];
+                let digit;
+                
+                if (char >= '0' && char <= '9') {
+                    digit = parseInt(char);
+                } else {
+                    // A=10, B=11, C=12, D=13, E=14, F=15
+                    digit = char.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+                }
+                
+                const power = hexString.length - 1 - i;
+                decimal += digit * Math.pow(16, power);
+            }
+            
+            alert("Шестнадцатеричное число " + hexString + " в десятичной системе равно: " + decimal);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3 - Кандидат на вакансию</title>
+</head>
+<body>
+    <h1>Задание 3: Проверка кандидата на вакансию</h1>
+    <p>Нажмите кнопку для запуска программы</p>
+    <button onclick="checkCandidate()">Запустить</button>
+
+    <script>
+        function checkCandidate() {
+            // Ввод данных о кандидате
+            const firstName = prompt("Введите имя кандидата:");
+            const lastName = prompt("Введите фамилию кандидата:");
+            const birthYear = parseInt(prompt("Введите год рождения:"));
+            const specialty = prompt("Введите специальность:");
+            const experience = parseFloat(prompt("Введите стаж работы (в годах):"));
+            const languagesInput = prompt("Введите языки программирования через пробел:");
+            
+            // Создаем объект кандидата
+            const candidate = {
+                firstName: firstName,
+                lastName: lastName,
+                birthYear: birthYear,
+                specialty: specialty,
+                experience: experience,
+                languages: languagesInput.split(' ')
+            };
+            
+            // Проверка кандидата
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - birthYear;
+            const hasJavaScript = candidate.languages.some(lang => lang.toLowerCase() === 'javascript');
+            
+            // Условия: старше 18 лет, стаж более 2 лет, специальность "разработчик", есть JavaScript
+            if (age > 18 && candidate.experience > 2 && 
+                candidate.specialty.toLowerCase() === 'разработчик' && hasJavaScript) {
+                candidate.status = 'соответствует';
+            }
+            
+            // Вывод данных объекта в консоль
+            console.log(candidate);
+            
+            // Также выводим в alert для наглядности
+            let output = "Данные кандидата:\n";
+            for (let key in candidate) {
+                output += key + ": " + candidate[key] + "\n";
+            }
+            alert(output);
+        }
+    </script>
+</body>
+</html>
