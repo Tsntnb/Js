@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкетирование сотрудников</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 16px;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.reset-btn {
+            background-color: #e74c3c;
+        }
+
+        button.reset-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                padding: 10px;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                position: absolute;
+                top: 15px;
+                left: 10px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                content: attr(data-label);
+                color: var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Результаты анкетирования</h2>
+    <div id="resultContent">
+        <p class="status-message">Загрузка данных...</p>
+    </div>
+    <div class="controls" id="controls" style="display:none;">
+        <button class="reset-btn" onclick="app.resetSurvey()">Пройти опрос заново</button>
+    </div>
+</div>
+
+<script>
+/**
+ * Модуль приложения для проведения анкетирования
+ */
+const app = (function() {
+    const STORAGE_KEY = 'survey_data_v2';
+    
+    // Конфигурация вопросов
+    const questions = [
+        { id: 'lastName', text: "Введите вашу фамилию:", required: true },
+        { id: 'firstName', text: "Введите ваше имя:", required: true },
+        { id: 'middleName', text: "Введите ваше отчество:", required: true },
+        { id: 'gender', text: "Введите ваш пол (М/Ж):", type: 'gender' },
+        { id: 'birthYear', text: "Введите год рождения:", type: 'year' },
+        { id: 'city', text: "Введите город проживания:", required: true },
+        { id: 'email', text: "Введите ваш контактный email:", type: 'email' },
+        { id: 'profession', text: "Введите вашу профессию:", required: true },
+        { id: 'driverLicense', text: "Есть ли у вас водительские права? (Да/Нет):", type: 'yesno' },
+        { id: 'sport', text: "Как часто вы занимаетесь спортом?\n(Каждый день / 2-3 раза в неделю / Редко / Никогда):", required: true },
+        { id: 'lang', text: "Любимый язык программирования:", required: false },
+        { id: 'mood', text: "Оцените настроение сегодня (от 1 до 5):", type: 'rating', min: 1, max: 5 }
+    ];
+
+    /**
+     * Склонение ФИО в родительный падеж (упрощенная логика)
+     */
+    function declensionFIO(lastName, firstName, middleName, gender) {
+        const isMale = gender.toUpperCase() === 'М';
+        
+        const declineLast = (name) => {
+            if (!name) return '';
+            const lower = name.toLowerCase();
+            if (!isMale) { // Женский род
+                if (lower.endsWith('а')) return name.slice(0, -1) + 'ы';
+                if (lower.endsWith('я')) return name.slice(0, -1) + 'и';
+                return name; // Фамилии на согласный обычно не склоняются в женском роде (или сложно)
+            } else { // Мужской род
+                if (lower.endsWith('й') || lower.endsWith('ый') || lower.endsWith('ий')) return name.slice(0, -1) + 'ого';
+                if (lower.endsWith('ь')) return name.slice(0, -1) + 'я';
+                if (lower.endsWith('а')) return name.slice(0, -1) + 'ы';
+                if (lower.endsWith('я')) return name.slice(0, -1) + 'и';
+                return name + 'а';
+            }
+        };
+
+        const declineFirst = (name) => {
+            if (!name) return '';
+            const lower = name.toLowerCase();
+            if (!isMale) {
+                if (lower.endsWith('а')) return name.slice(0, -1) + 'ы';
+                if (lower.endsWith('я')) return name.slice(0, -1) + 'и';
+                return name;
+            } else {
+                if (lower.endsWith('й')) return name.slice(0, -1) + 'я';
+                if (lower.endsWith('ь')) return name.slice(0, -1) + 'я';
+                return name + 'а';
+            }
+        };
+
+        const declineMiddle = (name) => {
+            if (!name) return '';
+            const lower = name.toLowerCase();
+            if (!isMale) {
+                if (lower.endsWith('на')) return name.slice(0, -2) + 'ны';
+                return name;
+            } else {
+                if (lower.endsWith('ич')) return name + 'а';
+                if (lower.endsWith('е')) return name.slice(0, -1) + 'я';
+                return name + 'а';
+            }
+        };
+
+        return `${declineLast(lastName)} ${declineFirst(firstName)} ${declineMiddle(middleName)}`;
+    }
+
+    /**
+     * Валидация года
+     */
+    function validateYear(input) {
+        const year = parseInt(input, 10);
+        const currentYear = new Date().getFullYear();
+        if (!isNaN(year) && year >= 1900 && year <= currentYear) {
+            return year;
+        }
+        return null;
+    }
+
+    /**
+     * Валидация рейтинга
+     */
+    function validateRating(input, min, max) {
+        const val = parseInt(input, 10);
+        if (!isNaN(val) && val >= min && val <= max) {
+            return val;
+        }
+        return null;
+    }
+
+    /**
+     * Основной цикл опроса
+     */
+    function runSurvey() {
+        const results = {};
+        
+        for (let q of questions) {
+            let validAnswer = false;
+            let answer = null;
+            let attempts = 0;
+
+            while (!validAnswer && attempts < 5) {
+                let input = prompt(q.text, "");
+                
+                // Обработка отмены
+                if (input === null) {
+                    if (confirm("Опрос прерван. Данные не будут сохранены.\nВыйти?")) {
+                        return null;
+                    }
+                    continue;
+                }
+
+                input = input.trim();
+
+                // Логика в зависимости от типа вопроса
+                switch(q.type) {
+                    case 'year':
+                        const year = validateYear(input);
+                        if (year) {
+                            answer = year;
+                            validAnswer = true;
+                        } else {
+                            alert(`Введите корректный год (1900-${new Date().getFullYear()})`);
+                        }
+                        break;
+                    
+                    case 'rating':
+                        const rating = validateRating(input, q.min, q.max);
+                        if (rating !== null) {
+                            answer = rating;
+                            validAnswer = true;
+                        } else {
+                            alert(`Введите число от ${q.min} до ${q.max}`);
+                        }
+                        break;
+
+                    case 'gender':
+                        const g = input.toUpperCase();
+                        if (g === 'М' || g === 'Ж') {
+                            answer = g;
+                            validAnswer = true;
+                        } else {
+                            alert("Введите 'М' или 'Ж'");
+                        }
+                        break;
+
+                    case 'yesno':
+                        const yn = input.toUpperCase();
+                        if (yn === 'ДА' || yn === 'НЕТ') {
+                            answer = yn;
+                            validAnswer = true;
+                        } else {
+                            alert("Введите 'Да' или 'Нет'");
+                        }
+                        break;
+
+                    default:
+                        if (q.required && input === "") {
+                            alert("Это поле обязательно для заполнения");
+                        } else {
+                            answer = input || "Не указано";
+                            validAnswer = true;
+                        }
+                }
+                attempts++;
+            }
+
+            if (!validAnswer) {
+                answer = "Не указано"; // Дефолт если много ошибок
+            }
+            results[q.id] = answer;
+        }
+
+        return processResults(results);
+    }
+
+    /**
+     * Обработка сырых данных
+     */
+    function processResults(data) {
+        const now = new Date();
+        const age = now.getFullYear() - data.birthYear;
+        
+        const processed = {
+            ...data,
+            age: age,
+            timestamp: now.toLocaleString('ru-RU'),
+            fioGenitive: declensionFIO(data.lastName, data.firstName, data.middleName, data.gender)
+        };
+
+        // Сохранение в localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(processed));
+        return processed;
+    }
+
+    /**
+     * Отрисовка таблицы
+     */
+    function renderTable(data) {
+        if (!data) {
+            document.getElementById('resultContent').innerHTML = 
+                '<p class="status-message" style="color:red">Ошибка загрузки данных.</p>';
+            return;
+        }
+
+        const rows = [
+            { label: "ФИО (Именительный)", value: `${data.lastName} ${data.firstName} ${data.middleName}` },
+            { label: "ФИО (Родительный)", value: data.fioGenitive },
+            { label: "Пол", value: data.gender },
+            { label: "Год рождения", value: data.birthYear },
+            { label: "Возраст", value: `${data.age} лет` },
+            { label: "Город", value: data.city },
+            { label: "Email", value: data.email },
+            { label: "Профессия", value: data.profession },
+            { label: "Водительские права", value: data.driverLicense },
+            { label: "Спорт", value: data.sport },
+            { label: "Язык программирования", value: data.lang },
+            { label: "Настроение", value: data.mood },
+            { label: "Дата заполнения", value: data.timestamp }
+        ];
+
+        let html = `<h3 style="text-align:center; color:#555;">Анкета участника</h3>`;
+        html += `<table><thead><tr><th>Параметр</th><th>Значение</th></tr></thead><tbody>`;
+        
+        rows.forEach(row => {
+            html += `<tr>
+                <td data-label="Параметр">${row.label}</td>
+                <td data-label="Значение"><strong>${row.value}</strong></td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table>`;
+        document.getElementById('resultContent').innerHTML = html;
+        document.getElementById('controls').style.display = 'block';
+    }
+
+    /**
+     * Инициализация
+     */
+    function init() {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        
+        if (storedData) {
+            try {
+                const parsed = JSON.parse(storedData);
+                renderTable(parsed);
+            } catch (e) {
+                console.error("Ошибка парсинга данных", e);
+                startNewSurvey();
+            }
+        } else {
+            startNewSurvey();
+        }
+    }
+
+    function startNewSurvey() {
+        const result = runSurvey();
+        if (result) {
+            renderTable(result);
+        } else {
+            document.getElementById('resultContent').innerHTML = 
+                '<p class="status-message">Опрос был отменен.</p>';
+        }
+    }
+
+    function resetSurvey() {
+        if(confirm("Вы уверены? Текущие данные будут удалены.")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    return {
+        init,
+        resetSurvey
+    };
+
+})();
+
+// Запуск приложения
+document.addEventListener('DOMContentLoaded', app.init);
+
+</script>
+</body>
+</html>
