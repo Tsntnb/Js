@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 1: Наименьшее число из трех</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Наименьшее число из трех</h1>
+    <div>
+        <label>a = <input type="number" id="numA" step="any"></label><br>
+        <label>b = <input type="number" id="numB" step="any"></label><br>
+        <label>c = <input type="number" id="numC" step="any"></label><br>
+        <button onclick="findMin()">Найти наименьшее</button>
+    </div>
+    <div id="output" class="result"></div>
+
+    <script>
+        // Функция для определения наименьшего числа из трех без использования Math.min
+        function findMinimum(a, b, c) {
+            let min = a;
+            
+            if (b < min) {
+                min = b;
+            }
+            
+            if (c < min) {
+                min = c;
+            }
+            
+            return min;
+        }
+
+        // Основная функция для обработки и вывода результатов
+        function findMin() {
+            const a = parseFloat(document.getElementById('numA').value);
+            const b = parseFloat(document.getElementById('numB').value);
+            const c = parseFloat(document.getElementById('numC').value);
+
+            // Проверка на корректность ввода
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                document.getElementById('output').innerHTML = '<p style="color: red;">Пожалуйста, введите все три числа!</p>';
+                return;
+            }
+
+            const min = findMinimum(a, b, c);
+            
+            // Определяем, какая переменная содержит наименьшее значение
+            let minVar = '';
+            if (min === a) {
+                minVar = 'a';
+            } else if (min === b) {
+                minVar = 'b';
+            } else {
+                minVar = 'c';
+            }
+
+            // Формируем вывод
+            const output = `
+                <p><strong>Введены значения:</strong></p>
+                <p>I. a = ${a}</p>
+                <p>II. b = ${b}</p>
+                <p>III. c = ${c}</p>
+                <hr>
+                <p><strong>Наименьшее число: ${minVar} = ${min}</strong></p>
+            `;
+
+            document.getElementById('output').innerHTML = output;
+        }
+    </script>
+</body>
+</html>

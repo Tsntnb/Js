@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 2: Треугольник по координатам</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 80px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .coord-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Треугольник по координатам вершин</h1>
+    <div>
+        <div class="coord-group">
+            <h3>Вершина A:</h3>
+            <label>x₁ = <input type="number" id="ax" step="any" value="0"></label>
+            <label>y₁ = <input type="number" id="ay" step="any" value="0"></label>
+        </div>
+        <div class="coord-group">
+            <h3>Вершина B:</h3>
+            <label>x₂ = <input type="number" id="bx" step="any" value="3"></label>
+            <label>y₂ = <input type="number" id="by" step="any" value="4"></label>
+        </div>
+        <div class="coord-group">
+            <h3>Вершина C:</h3>
+            <label>x₃ = <input type="number" id="cx" step="any" value="6"></label>
+            <label>y₃ = <input type="number" id="cy" step="any" value="0"></label>
+        </div>
+        <button onclick="calculateTriangle()">Вычислить</button>
+    </div>
+    <div id="output" class="result"></div>
+
+    <script>
+        // Функция вычисления длины стороны треугольника (длины отрезка по координатам)
+        function calculateSideLength(x1, y1, x2, y2) {
+            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
+
+        // Функция вычисления периметра треугольника
+        function calculatePerimeter(sideAB, sideBC, sideAC) {
+            return sideAB + sideBC + sideAC;
+        }
+
+        // Функция вычисления площади треугольника по формуле Герона
+        function calculateArea(sideAB, sideBC, sideAC) {
+            const p = calculatePerimeter(sideAB, sideBC, sideAC) / 2; // Полупериметр
+            return Math.sqrt(p * (p - sideAB) * (p - sideBC) * (p - sideAC));
+        }
+
+        // Основная функция для обработки и вывода результатов
+        function calculateTriangle() {
+            // Получаем координаты вершин
+            const ax = parseFloat(document.getElementById('ax').value);
+            const ay = parseFloat(document.getElementById('ay').value);
+            const bx = parseFloat(document.getElementById('bx').value);
+            const by = parseFloat(document.getElementById('by').value);
+            const cx = parseFloat(document.getElementById('cx').value);
+            const cy = parseFloat(document.getElementById('cy').value);
+
+            // Проверка на корректность ввода
+            if ([ax, ay, bx, by, cx, cy].some(isNaN)) {
+                document.getElementById('output').innerHTML = '<p style="color: red;">Пожалуйста, введите все координаты!</p>';
+                return;
+            }
+
+            // Вычисляем длины сторон
+            const sideAB = calculateSideLength(ax, ay, bx, by);
+            const sideBC = calculateSideLength(bx, by, cx, cy);
+            const sideAC = calculateSideLength(ax, ay, cx, cy);
+
+            // Проверяем, является ли фигура треугольником (неравенство треугольника)
+            if (sideAB + sideBC <= sideAC || 
+                sideAB + sideAC <= sideBC || 
+                sideBC + sideAC <= sideAB) {
+                document.getElementById('output').innerHTML = '<p style="color: red;">Введенные точки не образуют треугольник!</p>';
+                return;
+            }
+
+            // Вычисляем периметр и площадь
+            const perimeter = calculatePerimeter(sideAB, sideBC, sideAC);
+            const area = calculateArea(sideAB, sideBC, sideAC);
+
+            // Формируем вывод
+            const output = `
+                <h2>Результаты вычислений:</h2>
+                <h3>Координаты вершин:</h3>
+                <p>A(${ax}, ${ay})</p>
+                <p>B(${bx}, ${by})</p>
+                <p>C(${cx}, ${cy})</p>
+                <hr>
+                <h3>Длины сторон:</h3>
+                <p>AB = ${sideAB.toFixed(4)}</p>
+                <p>BC = ${sideBC.toFixed(4)}</p>
+                <p>AC = ${sideAC.toFixed(4)}</p>
+                <hr>
+                <h3>Периметр треугольника:</h3>
+                <p><strong>P = ${perimeter.toFixed(4)}</strong></p>
+                <hr>
+                <h3>Площадь треугольника:</h3>
+                <p><strong>S = ${area.toFixed(4)}</strong></p>
+            `;
+
+            document.getElementById('output').innerHTML = output;
+        }
+    </script>
+</body>
+</html>
