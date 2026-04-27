@@ -86,49 +86,62 @@
 
         // Функция склонения ФИО в родительный падеж (упрощенная версия)
         function getGenitiveCase(firstName, lastName, patronymic) {
-            // Упрощенная реализация - добавляем окончаний для распространенных фамилий
             let genitiveLastName = lastName;
             let genitiveFirstName = firstName;
             let genitivePatronymic = patronymic;
 
             // Обработка фамилий (мужские окончания)
-            if (lastName.toLowerCase().endsWith('ов') || lastName.toLowerCase().endsWith('ев')) {
-                genitiveLastName = lastName.slice(0, -1) + 'а';
-            } else if (lastName.toLowerCase().endsWith('ин')) {
-                genitiveLastName = lastName.slice(0, -1) + 'а';
-            } else if (lastName.toLowerCase().endsWith('ский')) {
+            const lastNameLower = lastName.toLowerCase();
+            if (lastNameLower.endsWith('ов') || lastNameLower.endsWith('ев')) {
+                genitiveLastName = lastName.slice(0, -2) + 'ова';
+            } else if (lastNameLower.endsWith('ин')) {
+                genitiveLastName = lastName.slice(0, -2) + 'ина';
+            } else if (lastNameLower.endsWith('ский')) {
+                genitiveLastName = lastName.slice(0, -4) + 'ского';
+            } else if (lastNameLower.endsWith('ой')) {
                 genitiveLastName = lastName.slice(0, -2) + 'ого';
-            } else if (lastName.toLowerCase().endsWith('ый')) {
+            } else if (lastNameLower.endsWith('ый')) {
                 genitiveLastName = lastName.slice(0, -2) + 'ого';
+            } else if (lastNameLower.endsWith('а') || lastNameLower.endsWith('я')) {
+                // Женские фамилии уже имеют правильное окончание или требуют минимальных изменений
+                if (lastNameLower.endsWith('ая')) {
+                    genitiveLastName = lastName.slice(0, -2) + 'ой';
+                } else if (lastNameLower.endsWith('я')) {
+                    genitiveLastName = lastName.slice(0, -1) + 'и';
+                } else if (lastNameLower.endsWith('а')) {
+                    genitiveLastName = lastName.slice(0, -1) + 'ы';
+                }
             }
 
             // Обработка имен (мужские окончания)
-            if (firstName.toLowerCase().endsWith('ей')) {
+            const firstNameLower = firstName.toLowerCase();
+            if (firstNameLower.endsWith('ей')) {
                 genitiveFirstName = firstName.slice(0, -2) + 'ея';
-            } else if (firstName.toLowerCase().endsWith('ий')) {
+            } else if (firstNameLower.endsWith('ий')) {
                 genitiveFirstName = firstName.slice(0, -2) + 'ия';
-            } else if (firstName.toLowerCase().endsWith('й')) {
+            } else if (firstNameLower.endsWith('й')) {
                 genitiveFirstName = firstName.slice(0, -1) + 'я';
-            } else if (firstName.toLowerCase().endsWith('а')) {
+            } else if (firstNameLower.endsWith('а')) {
                 genitiveFirstName = firstName.slice(0, -1) + 'ы';
-            } else if (firstName.toLowerCase().endsWith('я')) {
+            } else if (firstNameLower.endsWith('я')) {
                 genitiveFirstName = firstName.slice(0, -1) + 'и';
-            } else if (firstName.toLowerCase().endsWith('о')) {
+            } else if (firstNameLower.endsWith('о')) {
                 genitiveFirstName = firstName.slice(0, -1) + 'а';
             }
+            // Если имя не подходит под правила, оставляем как есть
 
             // Обработка отчеств
-            if (patronymic.toLowerCase().endsWith('ич')) {
+            const patronymicLower = patronymic.toLowerCase();
+            if (patronymicLower.endsWith('ич')) {
                 genitivePatronymic = patronymic.slice(0, -2) + 'ича';
-            } else if (patronymic.toLowerCase().endsWith('ович')) {
-                genitivePatronymic = patronymic.slice(0, -3) + 'овича';
-            } else if (patronymic.toLowerCase().endsWith('евич')) {
-                genitivePatronymic = patronymic.slice(0, -3) + 'евича';
-            } else if (patronymic.toLowerCase().endsWith('на')) {
-                genitivePatronymic = patronymic.slice(0, -1) + 'ы';
-            } else if (patronymic.toLowerCase().endsWith('на')) {
+            } else if (patronymicLower.endsWith('ович')) {
+                genitivePatronymic = patronymic.slice(0, -4) + 'овича';
+            } else if (patronymicLower.endsWith('евич')) {
+                genitivePatronymic = patronymic.slice(0, -4) + 'евича';
+            } else if (patronymicLower.endsWith('на')) {
                 genitivePatronymic = patronymic.slice(0, -2) + 'ны';
             }
+            // Если отчество не подходит под правила, оставляем как есть
 
             return `${genitiveFirstName} ${genitiveLastName} ${genitivePatronymic}`;
         }
