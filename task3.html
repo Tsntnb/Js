@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 900px;
             margin: 50px auto;
             padding: 20px;
         }
@@ -43,84 +43,124 @@
         h3 {
             margin-top: 0;
         }
+        .formula {
+            font-style: italic;
+            color: #333;
+            background-color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Вычисление математических выражений</h1>
     
     <div class="expression-group">
-        <h3>Выражение 1: z = (x + y) * 2</h3>
-        <label>x = <input type="number" id="x1" step="any" value="5"></label>
-        <label>y = <input type="number" id="y1" step="any" value="3"></label>
+        <h3>Выражение 1</h3>
+        <p class="formula">((b + √(b² + 4ac)) / 2a) - a³·c + b⁻²</p>
+        <label>a = <input type="number" id="a1" step="any" value="1"></label>
+        <label>b = <input type="number" id="b1" step="any" value="2"></label>
+        <label>c = <input type="number" id="c1" step="any" value="1"></label>
         <button onclick="calculateExpression1()">Вычислить</button>
         <p>Результат: <span id="result1">-</span></p>
     </div>
 
     <div class="expression-group">
-        <h3>Выражение 2: z = x² + y²</h3>
-        <label>x = <input type="number" id="x2" step="any" value="4"></label>
-        <label>y = <input type="number" id="y2" step="any" value="6"></label>
+        <h3>Выражение 2</h3>
+        <p class="formula">a/c · b/d - (ab - c)/cd</p>
+        <label>a = <input type="number" id="a2" step="any" value="2"></label>
+        <label>b = <input type="number" id="b2" step="any" value="3"></label>
+        <label>c = <input type="number" id="c2" step="any" value="4"></label>
+        <label>d = <input type="number" id="d2" step="any" value="5"></label>
         <button onclick="calculateExpression2()">Вычислить</button>
         <p>Результат: <span id="result2">-</span></p>
     </div>
 
     <div class="expression-group">
-        <h3>Выражение 3: z = √(x * y)</h3>
-        <label>x = <input type="number" id="x3" step="any" value="16"></label>
-        <label>y = <input type="number" id="y3" step="any" value="9"></label>
+        <h3>Выражение 3</h3>
+        <p class="formula">((sin x + cos y) / (cos x - sin y)) · tg(xy)</p>
+        <label>x = <input type="number" id="x3" step="any" value="0.5"></label>
+        <label>y = <input type="number" id="y3" step="any" value="0.3"></label>
         <button onclick="calculateExpression3()">Вычислить</button>
         <p>Результат: <span id="result3">-</span></p>
     </div>
 
     <div class="expression-group">
-        <h3>Выражение 4: z = sin(x) + cos(y) (в радианах)</h3>
-        <label>x = <input type="number" id="x4" step="any" value="0.5"></label>
-        <label>y = <input type="number" id="y4" step="any" value="0.3"></label>
+        <h3>Выражение 4</h3>
+        <p class="formula">((x + y) / (y + 1)) - ((xy - 12) / (34 + x))</p>
+        <label>x = <input type="number" id="x4" step="any" value="5"></label>
+        <label>y = <input type="number" id="y4" step="any" value="3"></label>
         <button onclick="calculateExpression4()">Вычислить</button>
         <p>Результат: <span id="result4">-</span></p>
-    </div>
-
-    <div class="expression-group">
-        <h3>Выражение 5: z = (a + b + c) / 3 (среднее арифметическое)</h3>
-        <label>a = <input type="number" id="a5" step="any" value="10"></label>
-        <label>b = <input type="number" id="b5" step="any" value="20"></label>
-        <label>c = <input type="number" id="c5" step="any" value="30"></label>
-        <button onclick="calculateExpression5()">Вычислить</button>
-        <p>Результат: <span id="result5">-</span></p>
     </div>
 
     <div id="output" class="result"></div>
 
     <script>
-        // Выражение 1: z = (x + y) * 2
+        // Выражение 1: ((b + √(b² + 4ac)) / 2a) - a³·c + b⁻²
         function calculateExpression1() {
-            const x = parseFloat(document.getElementById('x1').value);
-            const y = parseFloat(document.getElementById('y1').value);
+            const a = parseFloat(document.getElementById('a1').value);
+            const b = parseFloat(document.getElementById('b1').value);
+            const c = parseFloat(document.getElementById('c1').value);
             
-            if (isNaN(x) || isNaN(y)) {
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
                 document.getElementById('result1').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
                 return;
             }
             
-            const z = (x + y) * 2;
-            document.getElementById('result1').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+            if (a === 0) {
+                document.getElementById('result1').innerHTML = '<span style="color: red;">Ошибка: деление на ноль (a = 0)!</span>';
+                return;
+            }
+            
+            if (b === 0) {
+                document.getElementById('result1').innerHTML = '<span style="color: red;">Ошибка: деление на ноль (b = 0)!</span>';
+                return;
+            }
+            
+            const discriminant = Math.pow(b, 2) + 4 * a * c;
+            
+            if (discriminant < 0) {
+                document.getElementById('result1').innerHTML = '<span style="color: red;">Ошибка: отрицательное число под корнем!</span>';
+                return;
+            }
+            
+            const sqrtDiscriminant = Math.sqrt(discriminant);
+            const firstPart = (b + sqrtDiscriminant) / (2 * a);
+            const secondPart = Math.pow(a, 3) * c;
+            const thirdPart = Math.pow(b, -2);
+            
+            const result = firstPart - secondPart + thirdPart;
+            document.getElementById('result1').innerHTML = `<strong>${result.toFixed(6)}</strong>`;
         }
 
-        // Выражение 2: z = x² + y²
+        // Выражение 2: a/c · b/d - (ab - c)/cd
         function calculateExpression2() {
-            const x = parseFloat(document.getElementById('x2').value);
-            const y = parseFloat(document.getElementById('y2').value);
+            const a = parseFloat(document.getElementById('a2').value);
+            const b = parseFloat(document.getElementById('b2').value);
+            const c = parseFloat(document.getElementById('c2').value);
+            const d = parseFloat(document.getElementById('d2').value);
             
-            if (isNaN(x) || isNaN(y)) {
+            if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
                 document.getElementById('result2').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
                 return;
             }
             
-            const z = Math.pow(x, 2) + Math.pow(y, 2);
-            document.getElementById('result2').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+            if (c === 0 || d === 0) {
+                document.getElementById('result2').innerHTML = '<span style="color: red;">Ошибка: деление на ноль!</span>';
+                return;
+            }
+            
+            const firstPart = (a / c) * (b / d);
+            const secondPart = (a * b - c) / (c * d);
+            
+            const result = firstPart - secondPart;
+            document.getElementById('result2').innerHTML = `<strong>${result.toFixed(6)}</strong>`;
         }
 
-        // Выражение 3: z = √(x * y)
+        // Выражение 3: ((sin x + cos y) / (cos x - sin y)) · tg(xy)
         function calculateExpression3() {
             const x = parseFloat(document.getElementById('x3').value);
             const y = parseFloat(document.getElementById('y3').value);
@@ -130,16 +170,34 @@
                 return;
             }
             
-            if (x * y < 0) {
-                document.getElementById('result3').innerHTML = '<span style="color: red;">Невозможно вычислить корень из отрицательного числа!</span>';
+            const sinX = Math.sin(x);
+            const cosY = Math.cos(y);
+            const cosX = Math.cos(x);
+            const sinY = Math.sin(y);
+            
+            const denominator = cosX - sinY;
+            
+            if (Math.abs(denominator) < 1e-10) {
+                document.getElementById('result3').innerHTML = '<span style="color: red;">Ошибка: деление на ноль (cos x - sin y ≈ 0)!</span>';
                 return;
             }
             
-            const z = Math.sqrt(x * y);
-            document.getElementById('result3').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+            const xy = x * y;
+            const cosXY = Math.cos(xy);
+            
+            if (Math.abs(cosXY) < 1e-10) {
+                document.getElementById('result3').innerHTML = '<span style="color: red;">Ошибка: tg(xy) не определён (cos(xy) ≈ 0)!</span>';
+                return;
+            }
+            
+            const tanXY = Math.sin(xy) / cosXY;
+            const fraction = (sinX + cosY) / denominator;
+            
+            const result = fraction * tanXY;
+            document.getElementById('result3').innerHTML = `<strong>${result.toFixed(6)}</strong>`;
         }
 
-        // Выражение 4: z = sin(x) + cos(y)
+        // Выражение 4: ((x + y) / (y + 1)) - ((xy - 12) / (34 + x))
         function calculateExpression4() {
             const x = parseFloat(document.getElementById('x4').value);
             const y = parseFloat(document.getElementById('y4').value);
@@ -149,23 +207,21 @@
                 return;
             }
             
-            const z = Math.sin(x) + Math.cos(y);
-            document.getElementById('result4').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
-        }
-
-        // Выражение 5: z = (a + b + c) / 3
-        function calculateExpression5() {
-            const a = parseFloat(document.getElementById('a5').value);
-            const b = parseFloat(document.getElementById('b5').value);
-            const c = parseFloat(document.getElementById('c5').value);
-            
-            if (isNaN(a) || isNaN(b) || isNaN(c)) {
-                document.getElementById('result5').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+            if (y + 1 === 0) {
+                document.getElementById('result4').innerHTML = '<span style="color: red;">Ошибка: деление на ноль (y + 1 = 0)!</span>';
                 return;
             }
             
-            const z = (a + b + c) / 3;
-            document.getElementById('result5').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+            if (34 + x === 0) {
+                document.getElementById('result4').innerHTML = '<span style="color: red;">Ошибка: деление на ноль (34 + x = 0)!</span>';
+                return;
+            }
+            
+            const firstPart = (x + y) / (y + 1);
+            const secondPart = (x * y - 12) / (34 + x);
+            
+            const result = firstPart - secondPart;
+            document.getElementById('result4').innerHTML = `<strong>${result.toFixed(6)}</strong>`;
         }
     </script>
 </body>
