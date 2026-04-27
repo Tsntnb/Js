@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анкетирование сотрудников</title>
+    <title>Анкета</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -154,7 +154,7 @@
 <body>
 
 <div class="container">
-    <h2>Результаты анкетирования</h2>
+    <h2>Анкета + ФИО в родительном падеже</h2>
     <div id="resultContent">
         <p class="status-message">Загрузка данных...</p>
     </div>
@@ -380,7 +380,6 @@ const app = (function() {
         const headerTitle = `Анкета ${data.fioGenitive}`;
 
         const rows = [
-            { label: "ФИО (Именительный)", value: `${data.lastName} ${data.firstName} ${data.middleName}` },
             { label: "Пол", value: data.gender },
             { label: "Год рождения", value: data.birthYear },
             { label: "Возраст", value: `${data.age} лет` },
@@ -413,19 +412,8 @@ const app = (function() {
      * Инициализация
      */
     function init() {
-        const storedData = localStorage.getItem(STORAGE_KEY);
-        
-        if (storedData) {
-            try {
-                const parsed = JSON.parse(storedData);
-                renderTable(parsed);
-            } catch (e) {
-                console.error("Ошибка парсинга данных", e);
-                startNewSurvey();
-            }
-        } else {
-            startNewSurvey();
-        }
+        localStorage.removeItem(STORAGE_KEY);
+        startNewSurvey();
     }
 
     function startNewSurvey() {
