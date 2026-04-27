@@ -1,3 +1,4 @@
 ```
-# HTML files are source code - not ignoring them
+# HTML files - assuming these are source files, not build artifacts
+# No additional ignores needed as only HTML source files were added
 ```

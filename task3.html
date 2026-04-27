@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3: Вычисление выражений</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .expression-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+        }
+        h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Вычисление математических выражений</h1>
+    
+    <div class="expression-group">
+        <h3>Выражение 1: z = (x + y) * 2</h3>
+        <label>x = <input type="number" id="x1" step="any" value="5"></label>
+        <label>y = <input type="number" id="y1" step="any" value="3"></label>
+        <button onclick="calculateExpression1()">Вычислить</button>
+        <p>Результат: <span id="result1">-</span></p>
+    </div>
+
+    <div class="expression-group">
+        <h3>Выражение 2: z = x² + y²</h3>
+        <label>x = <input type="number" id="x2" step="any" value="4"></label>
+        <label>y = <input type="number" id="y2" step="any" value="6"></label>
+        <button onclick="calculateExpression2()">Вычислить</button>
+        <p>Результат: <span id="result2">-</span></p>
+    </div>
+
+    <div class="expression-group">
+        <h3>Выражение 3: z = √(x * y)</h3>
+        <label>x = <input type="number" id="x3" step="any" value="16"></label>
+        <label>y = <input type="number" id="y3" step="any" value="9"></label>
+        <button onclick="calculateExpression3()">Вычислить</button>
+        <p>Результат: <span id="result3">-</span></p>
+    </div>
+
+    <div class="expression-group">
+        <h3>Выражение 4: z = sin(x) + cos(y) (в радианах)</h3>
+        <label>x = <input type="number" id="x4" step="any" value="0.5"></label>
+        <label>y = <input type="number" id="y4" step="any" value="0.3"></label>
+        <button onclick="calculateExpression4()">Вычислить</button>
+        <p>Результат: <span id="result4">-</span></p>
+    </div>
+
+    <div class="expression-group">
+        <h3>Выражение 5: z = (a + b + c) / 3 (среднее арифметическое)</h3>
+        <label>a = <input type="number" id="a5" step="any" value="10"></label>
+        <label>b = <input type="number" id="b5" step="any" value="20"></label>
+        <label>c = <input type="number" id="c5" step="any" value="30"></label>
+        <button onclick="calculateExpression5()">Вычислить</button>
+        <p>Результат: <span id="result5">-</span></p>
+    </div>
+
+    <div id="output" class="result"></div>
+
+    <script>
+        // Выражение 1: z = (x + y) * 2
+        function calculateExpression1() {
+            const x = parseFloat(document.getElementById('x1').value);
+            const y = parseFloat(document.getElementById('y1').value);
+            
+            if (isNaN(x) || isNaN(y)) {
+                document.getElementById('result1').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+                return;
+            }
+            
+            const z = (x + y) * 2;
+            document.getElementById('result1').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+        }
+
+        // Выражение 2: z = x² + y²
+        function calculateExpression2() {
+            const x = parseFloat(document.getElementById('x2').value);
+            const y = parseFloat(document.getElementById('y2').value);
+            
+            if (isNaN(x) || isNaN(y)) {
+                document.getElementById('result2').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+                return;
+            }
+            
+            const z = Math.pow(x, 2) + Math.pow(y, 2);
+            document.getElementById('result2').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+        }
+
+        // Выражение 3: z = √(x * y)
+        function calculateExpression3() {
+            const x = parseFloat(document.getElementById('x3').value);
+            const y = parseFloat(document.getElementById('y3').value);
+            
+            if (isNaN(x) || isNaN(y)) {
+                document.getElementById('result3').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+                return;
+            }
+            
+            if (x * y < 0) {
+                document.getElementById('result3').innerHTML = '<span style="color: red;">Невозможно вычислить корень из отрицательного числа!</span>';
+                return;
+            }
+            
+            const z = Math.sqrt(x * y);
+            document.getElementById('result3').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+        }
+
+        // Выражение 4: z = sin(x) + cos(y)
+        function calculateExpression4() {
+            const x = parseFloat(document.getElementById('x4').value);
+            const y = parseFloat(document.getElementById('y4').value);
+            
+            if (isNaN(x) || isNaN(y)) {
+                document.getElementById('result4').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+                return;
+            }
+            
+            const z = Math.sin(x) + Math.cos(y);
+            document.getElementById('result4').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+        }
+
+        // Выражение 5: z = (a + b + c) / 3
+        function calculateExpression5() {
+            const a = parseFloat(document.getElementById('a5').value);
+            const b = parseFloat(document.getElementById('b5').value);
+            const c = parseFloat(document.getElementById('c5').value);
+            
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                document.getElementById('result5').innerHTML = '<span style="color: red;">Ошибка ввода!</span>';
+                return;
+            }
+            
+            const z = (a + b + c) / 3;
+            document.getElementById('result5').innerHTML = `<strong>${z.toFixed(4)}</strong>`;
+        }
+    </script>
+</body>
+</html>

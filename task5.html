@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 5: Анкета</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            width: 30%;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e8e8e8;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Анкетирование</h1>
+    <p>Нажмите кнопку ниже, чтобы начать прохождение анкеты:</p>
+    <button onclick="startSurvey()">Начать анкетирование</button>
+    
+    <div id="resultSection" class="hidden">
+        <h2 id="surveyTitle"></h2>
+        <table id="surveyTable">
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Массив вопросов для анкеты (не менее 10 вопросов)
+        const questions = [
+            "Ваше имя:",
+            "Ваша фамилия:",
+            "Ваше отчество:",
+            "Ваш год рождения:",
+            "Ваш город проживания:",
+            "Ваше образование (выберите): 1-среднее, 2-среднее специальное, 3-высшее",
+            "Ваше семейное положение:",
+            "Ваш номер телефона:",
+            "Ваш адрес электронной почты:",
+            "Ваша профессия/должность:",
+            "Ваши хобби:",
+            "Почему вы решили пройти эту анкету?"
+        ];
+
+        // Функция склонения ФИО в родительный падеж (упрощенная версия)
+        function getGenitiveCase(firstName, lastName, patronymic) {
+            // Упрощенная реализация - добавляем окончаний для распространенных фамилий
+            let genitiveLastName = lastName;
+            let genitiveFirstName = firstName;
+            let genitivePatronymic = patronymic;
+
+            // Обработка фамилий (мужские окончания)
+            if (lastName.toLowerCase().endsWith('ов') || lastName.toLowerCase().endsWith('ев')) {
+                genitiveLastName = lastName.slice(0, -1) + 'а';
+            } else if (lastName.toLowerCase().endsWith('ин')) {
+                genitiveLastName = lastName.slice(0, -1) + 'а';
+            } else if (lastName.toLowerCase().endsWith('ский')) {
+                genitiveLastName = lastName.slice(0, -2) + 'ого';
+            } else if (lastName.toLowerCase().endsWith('ый')) {
+                genitiveLastName = lastName.slice(0, -2) + 'ого';
+            }
+
+            // Обработка имен (мужские окончания)
+            if (firstName.toLowerCase().endsWith('ей')) {
+                genitiveFirstName = firstName.slice(0, -2) + 'ея';
+            } else if (firstName.toLowerCase().endsWith('ий')) {
+                genitiveFirstName = firstName.slice(0, -2) + 'ия';
+            } else if (firstName.toLowerCase().endsWith('й')) {
+                genitiveFirstName = firstName.slice(0, -1) + 'я';
+            } else if (firstName.toLowerCase().endsWith('а')) {
+                genitiveFirstName = firstName.slice(0, -1) + 'ы';
+            } else if (firstName.toLowerCase().endsWith('я')) {
+                genitiveFirstName = firstName.slice(0, -1) + 'и';
+            } else if (firstName.toLowerCase().endsWith('о')) {
+                genitiveFirstName = firstName.slice(0, -1) + 'а';
+            }
+
+            // Обработка отчеств
+            if (patronymic.toLowerCase().endsWith('ич')) {
+                genitivePatronymic = patronymic.slice(0, -2) + 'ича';
+            } else if (patronymic.toLowerCase().endsWith('ович')) {
+                genitivePatronymic = patronymic.slice(0, -3) + 'овича';
+            } else if (patronymic.toLowerCase().endsWith('евич')) {
+                genitivePatronymic = patronymic.slice(0, -3) + 'евича';
+            } else if (patronymic.toLowerCase().endsWith('на')) {
+                genitivePatronymic = patronymic.slice(0, -1) + 'ы';
+            } else if (patronymic.toLowerCase().endsWith('на')) {
+                genitivePatronymic = patronymic.slice(0, -2) + 'ны';
+            }
+
+            return `${genitiveFirstName} ${genitiveLastName} ${genitivePatronymic}`;
+        }
+
+        // Функция вычисления возраста по году рождения
+        function calculateAge(birthYear) {
+            const currentYear = new Date().getFullYear();
+            const year = parseInt(birthYear);
+            if (isNaN(year)) return null;
+            return currentYear - year;
+        }
+
+        // Функция форматирования даты и времени
+        function formatDateTime(date) {
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            return date.toLocaleDateString('ru-RU', options);
+        }
+
+        // Основная функция проведения анкетирования
+        function startSurvey() {
+            const answers = [];
+            
+            // Проходим по всем вопросам
+            for (let i = 0; i < questions.length; i++) {
+                const answer = prompt(questions[i]);
+                
+                // Если пользователь нажал Cancel или ввел пустое значение
+                if (answer === null) {
+                    alert("Анкетирование прервано!");
+                    return;
+                }
+                
+                answers.push(answer.trim());
+            }
+
+            // Получаем ФИО
+            const firstName = answers[0];
+            const lastName = answers[1];
+            const patronymic = answers[2];
+            const birthYear = answers[3];
+
+            // Вычисляем возраст
+            const age = calculateAge(birthYear);
+
+            // Получаем дату и время анкетирования
+            const surveyDateTime = new Date();
+            const formattedDateTime = formatDateTime(surveyDateTime);
+
+            // Получаем ФИО в родительном падеже для заголовка
+            const genitiveName = getGenitiveCase(firstName, lastName, patronymic);
+
+            // Показываем секцию с результатами
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('surveyTitle').textContent = `Анкета ${genitiveName}`;
+
+            // Формируем таблицу с данными
+            const tableData = [
+                ["Имя", firstName],
+                ["Фамилия", lastName],
+                ["Отчество", patronymic],
+                ["Год рождения", birthYear],
+                ["Возраст", age !== null ? `${age} лет` : "Не указан"],
+                ["Город проживания", answers[4]],
+                ["Образование", answers[5]],
+                ["Семейное положение", answers[6]],
+                ["Телефон", answers[7]],
+                ["Email", answers[8]],
+                ["Профессия/должность", answers[9]],
+                ["Хобби", answers[10]],
+                ["Причина прохождения анкеты", answers[11]],
+                ["Дата и время анкетирования", formattedDateTime]
+            ];
+
+            // Заполняем таблицу
+            let tableHTML = '';
+            tableData.forEach(([question, answer]) => {
+                tableHTML += `
+                    <tr>
+                        <th>${question}</th>
+                        <td>${answer}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('tableBody').innerHTML = tableHTML;
+        }
+    </script>
+</body>
+</html>

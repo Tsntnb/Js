@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 4: Обработка списка слов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result-section {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            line-height: 1.8;
+        }
+        .vowel-start {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        h3 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .word-list {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Обработка списка слов</h1>
+    <p>Введите 20 слов через пробел в появившемся окне:</p>
+    <button onclick="processWords()">Ввести слова и обработать</button>
+    
+    <div id="originalSection" class="result-section" style="display: none;">
+        <h3>1. Исходный список (20 слов):</h3>
+        <div id="originalList" class="word-list"></div>
+    </div>
+
+    <div id="reversedSection" class="result-section" style="display: none;">
+        <h3>2. Список в обратном порядке:</h3>
+        <div id="reversedList" class="word-list"></div>
+    </div>
+
+    <div id="sortedSection" class="result-section" style="display: none;">
+        <h3>3. Отсортированный список (слова начинающиеся с гласной выделены жирным):</h3>
+        <div id="sortedList" class="word-list"></div>
+    </div>
+
+    <div id="consonantSection" class="result-section" style="display: none;">
+        <h3>4. Список слов, начинающихся с согласной буквы:</h3>
+        <div id="consonantList" class="word-list"></div>
+    </div>
+
+    <script>
+        // Массив гласных букв (русский и английский алфавиты)
+        const vowels = ['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я', 
+                        'a', 'e', 'i', 'o', 'u', 'y'];
+
+        // Функция проверки, начинается ли слово с гласной буквы
+        function startsWithVowel(word) {
+            if (!word || word.length === 0) return false;
+            const firstChar = word.charAt(0).toLowerCase();
+            return vowels.includes(firstChar);
+        }
+
+        // Функция проверки, начинается ли слово с согласной буквы
+        function startsWithConsonant(word) {
+            if (!word || word.length === 0) return false;
+            const firstChar = word.charAt(0).toLowerCase();
+            // Проверяем, является ли символ буквой и не является ли гласной
+            return /[а-яa-z]/i.test(firstChar) && !vowels.includes(firstChar);
+        }
+
+        // Основная функция обработки слов
+        function processWords() {
+            // Получаем ввод от пользователя через prompt
+            const input = prompt("Введите 20 слов через пробел:", "слово1 слово2 слово3 слово4 слово5 слово6 слово7 слово8 слово9 слово10 слово11 слово12 слово13 слово14 слово15 слово16 слово17 слово18 слово19 слово20");
+            
+            if (input === null) {
+                alert("Ввод отменен!");
+                return;
+            }
+
+            // Разбиваем строку на массив слов
+            let words = input.trim().split(/\s+/);
+
+            // Фильтруем пустые элементы (если есть лишние пробелы)
+            words = words.filter(word => word.length > 0);
+
+            if (words.length === 0) {
+                alert("Вы не ввели ни одного слова!");
+                return;
+            }
+
+            // Показываем секции
+            document.getElementById('originalSection').style.display = 'block';
+            document.getElementById('reversedSection').style.display = 'block';
+            document.getElementById('sortedSection').style.display = 'block';
+            document.getElementById('consonantSection').style.display = 'block';
+
+            // 1. Вывод исходного списка
+            const originalHTML = words.map(word => 
+                startsWithVowel(word) 
+                    ? `<span class="vowel-start">${word}</span>` 
+                    : word
+            ).join(', ');
+            document.getElementById('originalList').innerHTML = originalHTML;
+
+            // 2. Вывод списка в обратном порядке
+            const reversedWords = [...words].reverse();
+            const reversedHTML = reversedWords.map(word => 
+                startsWithVowel(word) 
+                    ? `<span class="vowel-start">${word}</span>` 
+                    : word
+            ).join(', ');
+            document.getElementById('reversedList').innerHTML = reversedHTML;
+
+            // 3. Вывод отсортированного списка
+            const sortedWords = [...words].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+            const sortedHTML = sortedWords.map(word => 
+                startsWithVowel(word) 
+                    ? `<span class="vowel-start">${word}</span>` 
+                    : word
+            ).join(', ');
+            document.getElementById('sortedList').innerHTML = sortedHTML;
+
+            // 4. Вывод списка слов, начинающихся с согласной (используем filter)
+            const consonantWords = words.filter(word => startsWithConsonant(word));
+            const consonantHTML = consonantWords.join(', ');
+            
+            if (consonantWords.length === 0) {
+                document.getElementById('consonantList').innerHTML = '<em>Нет слов, начинающихся с согласной буквы</em>';
+            } else {
+                document.getElementById('consonantList').innerHTML = consonantHTML;
+            }
+        }
+    </script>
+</body>
+</html>
